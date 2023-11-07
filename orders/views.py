@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 
 def start(request):
-    return render(request, 'login.html')
+    return render(request, 'menu.html')
 
 
 def login_view(request):
