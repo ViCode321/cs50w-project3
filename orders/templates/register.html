@@ -12,16 +12,20 @@
     <div class="wrapper">
         <form class="login" method="post">
             {% csrf_token %}
-            <p class="title">Registrarse</p>
-            {% if error_message %}
-                <p class="error">{{ error_message }}</p>
-            {% endif %}
+            <p class="title">Registrarse</p>       
             <input type="text" name="username" placeholder="Usuario" autofocus/>
             <i class="fa fa-user"></i>
             <input type="password" name="password1" placeholder="Contraseña"/>  <!-- Cambiado a 'password1' -->
             <i class="fa fa-key"></i>
             <input type="password" name="password2" placeholder="Confirmar contraseña"/>  <!-- Cambiado a 'password2' -->
-            <i class="fa fa-key"></i>
+            <i class="fa fa-key"></i>            
+            {% if messages %}
+            <div class="error-messages">
+              {% for message in messages %}
+                <div class="message">{{ message }}</div>
+              {% endfor %}              
+            </div>            
+            {% endif %}                 
             <button type="submit">
                 <i class="spinner"></i>
                 <span class="state">Listo</span>

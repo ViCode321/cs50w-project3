@@ -13,17 +13,21 @@
         <form class="login" method="post">
             {% csrf_token %}
             <p class="title">Acceder</p>
-            {% if error_message %}
-            <p class="error">{{ error_message }}</p>
-            {% endif %}
             <input type="text" name="username" placeholder="Usuario" autofocus/>
             <i class="fa fa-user"></i>
             <input type="password" name="password" placeholder="Contraseña" />
             <i class="fa fa-key"></i>            
+            {% if messages %}
+            <div class="error-messages">
+              {% for message in messages %}
+                <div class="message">{{ message }}</div>
+              {% endfor %}              
+            </div>            
+            {% endif %}        
             <button type="submit">
               <i class="spinner"></i>
               <span class="state">Listo</span>
-          </button>          
+            </button>          
           </form>          
           <footer><a href="{% url 'register' %}">Si no tienes cuenta, crea una aquí</a></footer>
         </p>

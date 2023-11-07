@@ -1,7 +1,7 @@
 body {
   font-family: "Open Sans", sans-serif;
   height: 100vh;
-  background: url(../images/bg_1.webp) 50% fixed;
+  background: url(../images/pizzafondo.webp) 50% fixed;
   background-size: cover; }
 
 @keyframes spinner {
@@ -27,7 +27,7 @@ body {
   padding: 10px 20px 20px 20px;
   width: 90%;
   max-width: 320px;
-  background: #ffffff;
+  background: #44444482;
   position: relative;
   padding-bottom: 80px;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3); }
@@ -54,7 +54,7 @@ body {
     border: 1px solid #ddd;
     transition: border-width 0.2s ease;
     border-radius: 2px;
-    color: #ccc; }
+    color: #161212; }
     .login input + i.fa {
       color: #fff;
       font-size: 2em;
@@ -65,8 +65,8 @@ body {
       transition: all 0.1s ease-in; }
     .login input:focus {
       outline: none;
-      color: #444;
-      border-color: #ff0000;
+      color: #000000;
+      border-color: #000000;
       border-left-width: 35px; }
       .login input:focus + i.fa {
         opacity: 1;
@@ -74,10 +74,10 @@ body {
         transition: all 0.25s ease-out; }
   .login a {
     font-size: 0.8em;
-    color: #000000;
+    color: #fac564;
     text-decoration: none; }
   .login .title {
-    color: #444;
+    color: #ffffff;
     font-size: 1.2em;
     font-weight: bold;
     margin: 10px 0 30px 0;
@@ -87,7 +87,7 @@ body {
     width: 100%;
     height: 100%;
     padding: 10px 10px;
-    background: #ff0000;
+    background: #000000;
     color: #fff;
     display: block;
     border: none;
@@ -118,7 +118,7 @@ body {
       transition: top 0.3s 0.3s ease, opacity 0.3s 0.3s ease, border-radius 0.3s ease;
       box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.2); }
   .login:not(.loading) button:hover {
-    box-shadow: 0px 1px 3px #000000; }
+    box-shadow: 0px 1px 3px #fac564; }
   .login:not(.loading) button:focus {
     border-bottom-width: 4px; }
 
@@ -128,11 +128,28 @@ footer {
   text-align: center;
   font-weight: normal;
   font-size: 1em;
-  background: rgba(255, 255, 255, 0.666);
+  background: #44444482;
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.2);
   margin-top: 20px; }
   footer a, footer a:link {
-    color: #00255f;
+    color: #ffffff;
     text-decoration: none; }
+
+.error-messages {
+  position: fixed;
+  top: -100px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background-color: #000000;
+  color: #fff;
+  text-align: center;
+  animation: slide-down 0.5s ease-out forwards; }
+
+@keyframes slide-down {
+  0% {
+    top: -100px; }
+  100% {
+    top: 0; } }
 
 /*# sourceMappingURL=login.css.map */

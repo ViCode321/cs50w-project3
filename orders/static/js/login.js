@@ -17,3 +17,13 @@ $('.login').on('submit', function(e) {
     }, 4000);
   }, 3000);
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+  const showRequirementsButton = document.getElementById('show-requirements-button');
+  const requirementsBox = document.getElementById('requirements-box');
+
+  showRequirementsButton.addEventListener('click', function() {
+    // Muestra el cuadro de requerimientos al hacer clic en el botón
+    requirementsBox.style.display = 'block';
+  });
+});
