@@ -56,11 +56,12 @@ body {
     border-radius: 2px;
     color: #161212; }
     .login input + i.fa {
-      color: #fff;
-      font-size: 2em;
+      color: #ffffff00;
+      font-size: 1em;
       position: absolute;
       margin-top: -47px;
-      opacity: 0;
+      opacity: 1;
+      /* Mantener la opacidad constante */
       left: 0;
       transition: all 0.1s ease-in; }
     .login input:focus {
@@ -69,6 +70,7 @@ body {
       border-color: #000000;
       border-left-width: 35px; }
       .login input:focus + i.fa {
+        color: #fff;
         opacity: 1;
         left: 30px;
         transition: all 0.25s ease-out; }
