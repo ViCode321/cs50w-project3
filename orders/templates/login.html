@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceder</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'sass/login.css' %}">    
+</head>
+<body>
+    <div class="wrapper">
+        <form class="login" method="post">
+            {% csrf_token %}
+            <p class="title">Acceder</p>
+            {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+            {% endif %}
+            <input type="text" name="username" placeholder="Usuario" autofocus/>
+            <i class="fa fa-user"></i>
+            <input type="password" name="password" placeholder="Contraseña" />
+            <i class="fa fa-key"></i>
+            
+            <button>
+              <i class="spinner"></i>
+              <span class="state">Listo</span>
+            </button>
+          </form>          
+          <footer><a href="{% url 'register' %}">Si no tienes cuenta, crea una aquí</a></footer>
+        </p>
+      </div>    
+      <script src="{% static 'js/login.js' %}"></script>
+</body>
+</html>

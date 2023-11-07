@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menú de Pizzas</title>
+</head>
+<body>
+    <h1>Menú de Pizzas</h1>
+    <ul>
+        {% for pizza in pizzas %}
+            <li>
+                <h2>{{ pizza.name }}</h2>
+                <p>Tamaño: {{ pizza.size }}</p>
+                <p>Precio: ${{ pizza.price }}</p>
+                <!-- Coberturas -->
+                <p>Coberturas:</p>
+                <ul>
+                    {% for topping in pizza.toppings.all %}
+                        <li>{{ topping.name }} - ${{ topping.price }}</li>
+                    {% endfor %}
+                </ul>
+                <!-- Ingredientes adicionales -->
+                <p>Ingredientes adicionales:</p>
+                <ul>
+                    {% for ingredient in pizza.additional_ingredients.all %}
+                        <li>{{ ingredient.name }} - ${{ ingredient.price }}</li>
+                    {% endfor %}
+                </ul>
+                <!-- Imagen -->
+                <img src="{{ pizza.image_url }}" alt="{{ pizza.name }} Image">
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
