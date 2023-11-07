@@ -18,14 +18,14 @@
             {% endif %}
             <input type="text" name="username" placeholder="Usuario" autofocus/>
             <i class="fa fa-user"></i>
-            <input type="password" name="password1" placeholder="Contraseña" />  <!-- Cambiado a 'password1' -->
+            <input type="password" name="password1" placeholder="Contraseña"/>  <!-- Cambiado a 'password1' -->
             <i class="fa fa-key"></i>
-            <input type="password" name="password2" placeholder="Confirmar contraseña" />  <!-- Cambiado a 'password2' -->
+            <input type="password" name="password2" placeholder="Confirmar contraseña"/>  <!-- Cambiado a 'password2' -->
             <i class="fa fa-key"></i>
-            <button>
+            <button type="submit">
                 <i class="spinner"></i>
                 <span class="state">Listo</span>
-            </button>
+            </button>                      
         </form>        
         <footer><a href="{% url 'login' %}">Regresar</a></footer>
     </div>

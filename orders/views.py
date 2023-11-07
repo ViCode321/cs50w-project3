@@ -2,9 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from orders.forms import PizzaForm
 from orders.models import Pizza
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-
 
 def start(request):
     return render(request, 'login.html')
@@ -17,7 +16,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('pagina_de_inicio')  # Redirige a la página principal después del inicio de sesión
+            return redirect('menu')
         else:
             # Muestra un mensaje de error en caso de credenciales incorrectas
             error_message = "Nombre de usuario o contraseña incorrectos"
@@ -26,16 +25,17 @@ def login_view(request):
 
 def register_view(request):
     if request.method == 'POST':
-        # Procesar el formulario de registro
+        # Cerrar sesión antes de procesar el formulario de registro
+        logout(request)
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Iniciar sesión automáticamente después del registro
+            login(request, user)
             return redirect('menu')
     else:
-        # Mostrar el formulario vacío
-        form = UserCreationForm()    
+        form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
+
 
 # Create your views here.
 def home(request):
