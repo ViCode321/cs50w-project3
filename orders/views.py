@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from orders.forms import PizzaForm
 from orders.models import Pizza
 from django.contrib.auth import authenticate, login, logout
@@ -11,6 +11,14 @@ def start(request):
 
 def carrito(request):
     return render(request, 'carrito.html')
+
+def add_to_cart(request, pizza_id):
+    pizza = get_object_or_404(Pizza, pk=pizza_id)
+
+    # Aquí puedes implementar la lógica para agregar la pizza al carrito
+    # Puedes utilizar sesiones o un modelo de carrito de compras para hacer esto
+
+    return redirect('menu') 
 
 def login_view(request):
     if request.method == 'POST':
