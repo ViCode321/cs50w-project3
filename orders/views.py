@@ -7,7 +7,10 @@ from django.contrib import messages
 from .forms import CustomUserCreationForm
 
 def start(request):
-    return render(request, 'menu.html')
+    return render(request, 'index.html')
+
+def carrito(request):
+    return render(request, 'carrito.html')
 
 def login_view(request):
     if request.method == 'POST':
@@ -16,12 +19,17 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('menu')
+            return redirect('start')
         else:
             # Muestra un mensaje de error en caso de credenciales incorrectas
             messages.error(request, 'Nombre de usuario o contraseña incorrectos')
             return render(request, 'login.html')
     return render(request, 'login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
 
 def register_view(request):
     if request.method == 'POST':
@@ -29,7 +37,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # Iniciar sesión automáticamente después del registro
-            return redirect('menu')
+            return redirect('start')
         else:
             messages.error(request, 'Hubo un error en el registro. Por favor, corrige los errores a continuación.')
             # Devuelve la plantilla 'register.html' junto con el formulario y los mensajes de error
