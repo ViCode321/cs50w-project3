@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from orders.forms import PizzaForm
 from orders.models import Pizza
 from django.contrib.auth import authenticate, login, logout
@@ -11,6 +11,14 @@ def start(request):
 
 def carrito(request):
     return render(request, 'carrito.html')
+
+def add_to_cart(request, pizza_id):
+    pizza = get_object_or_404(Pizza, pk=pizza_id)
+
+    # Aquí puedes implementar la lógica para agregar la pizza al carrito
+    # Puedes utilizar sesiones o un modelo de carrito de compras para hacer esto
+
+    return redirect('menu') 
 
 def login_view(request):
     if request.method == 'POST':
@@ -53,16 +61,26 @@ def home(request):
 
 def index(request):
     if request.method == 'POST':
-        # Procesar el formulario si se ha enviado
         form = PizzaForm(request.POST)
         if form.is_valid():
-            form.save()  # Guarda la nueva pizza en la base de datos
-            return redirect('menu')  # Redirige a la página del menú después de agregar la pizza
+            form.save()
+            return redirect('menu')
     else:
-        # Muestra el formulario vacío si no se ha enviado
         form = PizzaForm()
+
     # Recupera todas las pizzas desde la base de datos
     pizzas = Pizza.objects.all()
+    
+    # Separa las pizzas por tamaño
+    pizzas_familiares = pizzas.filter(size=12)
+    pizzas_grandes = pizzas.filter(size=8)
+    pizzas_medianas = pizzas.filter(size=6)
+    pizzas_slice = pizzas.filter(size=4)
 
-    # Pasa las pizzas y el formulario a la plantilla para su renderización
-    return render(request, 'menu.html', {'pizzas': pizzas, 'form': form})
+    return render(request, 'menu.html', {
+        'pizzas_familiares': pizzas_familiares,
+        'pizzas_grandes': pizzas_grandes,
+        'pizzas_medianas': pizzas_medianas,
+        'pizzas_slice': pizzas_slice,
+        'form': form,
+    })

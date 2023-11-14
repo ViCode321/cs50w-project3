@@ -9,5 +9,6 @@ urlpatterns = [
     path('carrito/', views.carrito, name='carrito'),    
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('add_to_cart/<int:pizza_id>/', views.add_to_cart, name='add_to_cart'),    
     # Otras URLS
 ]
