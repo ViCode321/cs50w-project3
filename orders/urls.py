@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import login_view, logout_view
+from .views import login_view, logout_view, remove_from_cart
 
 urlpatterns = [
     path('', views.start, name='start'),  # Asociar la URL raíz a la vista de inicio
@@ -10,5 +10,6 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('add_to_cart/<int:pizza_id>/', views.add_to_cart, name='add_to_cart'),    
+    path('remove_from_cart/<int:item_id>/', remove_from_cart, name='remove_from_cart'),
     # Otras URLS
 ]
