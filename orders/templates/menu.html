@@ -3,7 +3,11 @@
 <html lang="en">
 
 <head>
+<<<<<<< HEAD
     <title>Pinocchio's Pizza & Subs</title>
+=======
+    <title>Menu</title>
+>>>>>>> main
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
@@ -103,19 +107,34 @@
                                                 </div>
                                             </div>
                                         </div>
+<<<<<<< HEAD
                                         {% if forloop.counter|divisibleby:3 %}<div class="w-100"></div>{% endif %}
+=======
+                                        {% if pizzas_grandes.count == 2 and forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
+>>>>>>> main
                                         {% endfor %}
                                     </div>
                                 </div>
 
+<<<<<<< HEAD
                                 <!--Pizza Grande-->
                                 <div class="tab-pane fade" id="v-pills-2" role="tabpanel"
                                     aria-labelledby="v-pills-2-tab">
+=======
+                                <!-- Pizza Grande -->
+                                <div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-2-tab">
+>>>>>>> main
                                     <div class="row">
                                         {% for pizza in pizzas_grandes %}
                                         <div class="col-md-4">
                                             <div class="menu-wrap custom-product-style">
+<<<<<<< HEAD
                                                 <a href="#" class="menu-img img mb-4"
+=======
+                                                <!-- Agrega una clase CSS para definir la altura de la imagen -->
+                                                <a href="#" class="menu-img img mb-4 pizza-image"
+>>>>>>> main
                                                     style="background-image: url({{ pizza.image_url }});"></a>
                                                 <div class="text">
                                                     <h3><a href="#">{{ pizza.name }}</a></h3>
@@ -124,18 +143,28 @@
                                                     <form method="POST" action="{% url 'add_to_cart' pizza.id %}">
                                                         {% csrf_token %}
                                                         <input type="hidden" name="quantity" value="1">
+<<<<<<< HEAD
                                                         <button type="submit"
                                                             class="btn btn-white btn-outline-white">Agregar al
                                                             carrito</button>
+=======
+                                                        <button type="submit" class="btn btn-white btn-outline-white">Agregar al carrito</button>
+>>>>>>> main
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
+<<<<<<< HEAD
                                         {% if forloop.counter|divisibleby:3 %}<div class="w-100"></div>{% endif %}
+=======
+                                        {% if pizzas_grandes.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
+>>>>>>> main
                                         {% endfor %}
                                     </div>
                                 </div>
 
+<<<<<<< HEAD
                                 <div class="tab-pane fade" id="v-pills-3" role="tabpanel"
                                     aria-labelledby="v-pills-3-tab">
                                     <div class="row">
@@ -163,6 +192,37 @@
                                     </div>
                                 </div>
 
+=======
+
+                                <div class="tab-pane fade" id="v-pills-3" role="tabpanel"
+                                    aria-labelledby="v-pills-3-tab">
+                                    <div class="row">
+                                        {% for pizza in pizzas_medianas %}
+                                        <div class="col-md-4">
+                                            <div class="menu-wrap custom-product-style">
+                                                <a href="#" class="menu-img img mb-4"
+                                                    style="background-image: url({{ pizza.image_url }});"></a>
+                                                <div class="text">
+                                                    <h3><a href="#">{{ pizza.name }}</a></h3>
+                                                    <p>{{ pizza.description }}</p>
+                                                    <p class="price"><span>${{ pizza.price }}</span></p>
+                                                    <form method="POST" action="{% url 'add_to_cart' pizza.id %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="quantity" value="1">
+                                                        <button type="submit"
+                                                            class="btn btn-white btn-outline-white">Agregar al
+                                                            carrito</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if pizzas_medianas.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+>>>>>>> main
                                 <div class="tab-pane fade" id="v-pills-4" role="tabpanel"
                                     aria-labelledby="v-pills-4-tab">
                                     <div class="row">
@@ -185,7 +245,12 @@
                                                 </div>
                                             </div>
                                         </div>
+<<<<<<< HEAD
                                         {% if forloop.counter|divisibleby:3 %}<div class="w-100"></div>{% endif %}
+=======
+                                        {% if pizzas_slice.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
+>>>>>>> main
                                         {% endfor %}
                                     </div>                                
                                 </div>

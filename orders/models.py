@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
+
 
 class Pizza(models.Model):
     """
@@ -57,6 +59,14 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     #url = models.ImageField Para imagen
+<<<<<<< HEAD
+=======
+
+class CartItem(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+>>>>>>> main
 
     def __str__(self):
-        return self.username
+        return f"{self.quantity} x {self.pizza.name} ({self.user.username})"

@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from orders.forms import PizzaForm
-from orders.models import Pizza
+from orders.models import CartItem, Pizza
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import CustomUserCreationForm
@@ -10,7 +10,67 @@ def start(request):
     return render(request, 'index.html')
 
 def carrito(request):
-    return render(request, 'carrito.html')
+    user_cart_items = CartItem.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        action = request.POST.get('action')
+
+        item = get_object_or_404(CartItem, id=item_id)
+
+        if item.user == request.user:
+            if action == 'remove':
+                item.delete()
+                messages.success(request, 'Producto eliminado del carrito.')
+            elif action == 'decrease':
+                if item.quantity > 1:
+                    item.quantity -= 1
+                    item.save()
+                    messages.success(request, 'Cantidad reducida en 1.')
+                else:
+                    item.delete()
+                    messages.success(request, 'Producto eliminado del carrito.')
+            elif action == 'increase':
+                item.quantity += 1
+                item.save()
+                messages.success(request, 'Cantidad aumentada en 1.')
+        else:
+            messages.error(request, 'No tienes permisos para realizar esta acción.')
+
+        return redirect('carrito')
+
+    context = {
+        'cart_items': user_cart_items,
+    }
+
+    return render(request, 'carrito.html', context)
+
+def add_to_cart(request, pizza_id):
+    pizza = get_object_or_404(Pizza, pk=pizza_id)
+
+    # Verificar si ya existe un elemento en el carrito para esta pizza y usuario
+    existing_cart_item = CartItem.objects.filter(user=request.user, pizza=pizza).first()
+
+    if existing_cart_item:
+        # Si ya existe, aumentar la cantidad
+        existing_cart_item.quantity += 1
+        existing_cart_item.save()
+    else:
+        # Si no existe, crear un nuevo elemento en el carrito
+        CartItem.objects.create(user=request.user, pizza=pizza, quantity=1)
+
+    return redirect('menu') 
+
+def remove_from_cart(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id)
+
+    if item.user == request.user:
+        item.delete()
+        messages.success(request, 'Producto eliminado del carrito.')
+    else:
+        messages.error(request, 'No tienes permisos para realizar esta acción.')
+
+    return redirect('carrito')
 
 def add_to_cart(request, pizza_id):
     pizza = get_object_or_404(Pizza, pk=pizza_id)
@@ -83,4 +143,8 @@ def index(request):
         'pizzas_medianas': pizzas_medianas,
         'pizzas_slice': pizzas_slice,
         'form': form,
+<<<<<<< HEAD
     })
+=======
+    })
+>>>>>>> main
