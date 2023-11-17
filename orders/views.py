@@ -72,14 +72,6 @@ def remove_from_cart(request, item_id):
 
     return redirect('carrito')
 
-def add_to_cart(request, pizza_id):
-    pizza = get_object_or_404(Pizza, pk=pizza_id)
-
-    # Aquí puedes implementar la lógica para agregar la pizza al carrito
-    # Puedes utilizar sesiones o un modelo de carrito de compras para hacer esto
-
-    return redirect('menu') 
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -143,8 +135,4 @@ def index(request):
         'pizzas_medianas': pizzas_medianas,
         'pizzas_slice': pizzas_slice,
         'form': form,
-<<<<<<< HEAD
     })
-=======
-    })
->>>>>>> main
