@@ -53,6 +53,7 @@ class CartItem(models.Model):
         return f"{self.quantity} x {self.pizza.name} ({self.pizza.size}) - Toppings: {toppings_list} - Ingredientes adicionales: {ingredients_list} - Precio por unidad: ${self.pizza.price}"
 
 class OrderItem(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
@@ -61,4 +62,3 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"Order #{self.id} - {self.user.username} - Total: ${self.total}"
-        
