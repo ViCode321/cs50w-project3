@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Mi carrito</title>
+    <title>Pedidos</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
@@ -51,58 +51,27 @@
     
     <section class="menu">
         <div class="container mt-5">
-            <h2>Mi Carrito</h2>
-            {% if order_confirmation_message %}
-            <p class="text-success">{{ order_confirmation_message }}</p>
-            {% endif %}
-            {% if cart_items %}
-                <table class="table mt-3">
-                    <thead>
-                        <tr>
-                            <th>Imagen</th>
-                            <th>Nombre</th>
-                            <th>Tamaño</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in cart_items %}
-                            <tr>
-                                <td><img src="{{ item.pizza.image_url }}" alt="{{ item.pizza.name }}" style="max-width: 100px;"></td>
-                                <td>{{ item.pizza.name }}</td>
-                                <td>{{ item.pizza.size }}</td>
-                                <td>${{ item.pizza.price }}</td>
-                                <td>
-                                    <form method="POST" action="{% url 'carrito' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="item_id" value="{{ item.id }}">
-                                        <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary btn-sm">-</button>
-                                        {{ item.quantity }}
-                                        <button type="submit" name="action" value="increase" class="btn btn-outline-secondary btn-sm">+</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <form method="POST" action="{% url 'remove_from_cart' item.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <form method="POST" action="{% url 'place_order' %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-primary">Colocar Orden</button>
-                </form>
-            {% else %}
-                <p>No tienes elementos en tu carrito.</p>
-            {% endif %}
+          <h2>Listado de Pedidos</h2>
+ 
+          {% for order in orders %}
+          <div class="order">
+            <h2>Orden {{ order.id }}</h2>
+            <p>Cliente: {{ order.user.username }}</p>
+            <p>Fecha: {{ order.order_date }}</p>
+      
+            <h3>Detalle de la Orden:</h3>
+            <ul>
+              {% for item in order.items.all %}
+              <li>
+                  {{ item.quantity }} x {{ item.pizza.name }} ({{ item.pizza.size }}) - {{ item }}
+              </li>
+              {% endfor %}          
+            </ul>  
+            <p>Total: ${{ order.total }}</p>
+          </div>
+          {% endfor %}    
         </div>
-    </section>
-    
+    </section>    
 
     <footer class="ftco-footer ftco-section img">
         <div class="overlay"></div>

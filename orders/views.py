@@ -1,10 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from orders.forms import PizzaForm
-from orders.models import CartItem, Pizza
+from orders.models import CartItem, Pizza, Order
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import CustomUserCreationForm
+from django.db import transaction
 
 def start(request):
     return render(request, 'index.html')
@@ -71,6 +72,44 @@ def remove_from_cart(request, item_id):
         messages.error(request, 'No tienes permisos para realizar esta acción.')
 
     return redirect('carrito')
+
+@transaction.atomic
+def place_order(request):
+    if request.method == 'POST':
+        user_cart_items = CartItem.objects.filter(user=request.user)
+
+        # Verificar si el carrito está vacío
+        if not user_cart_items.exists():
+            messages.error(request, 'Error al colocar la orden. El carrito está vacío.')
+            return redirect('carrito')
+
+        # Calcular el total de la orden
+        total = sum(item.pizza.price * item.quantity for item in user_cart_items)
+
+        # Crear la orden
+        order = Order.objects.create(user=request.user, total=total)
+
+        # Agregar elementos del carrito a la orden
+        for item in user_cart_items:
+            order.items.add(item)
+
+        # Limpiar el carrito
+        user_cart_items.delete()
+
+        messages.success(request, 'Orden colocada exitosamente. ¡Gracias por tu compra!')
+
+        # Redirigir a la página de pedidos después de realizar la orden
+        return redirect('pedidos')
+    
+    # Si no es una solicitud POST, mostrar un mensaje de error
+    messages.error(request, 'Error al colocar la orden. Intenta nuevamente.')
+    return redirect('carrito')
+
+
+def pedidos(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'pedidos.html', {'orders': orders})
+
 
 def login_view(request):
     if request.method == 'POST':
