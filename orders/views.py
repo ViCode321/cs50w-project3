@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from orders.forms import PizzaForm
-from orders.models import CartItem, Pizza, Order
+from orders.models import CartItem, Pizza, OrderItem
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import CustomUserCreationForm
@@ -83,15 +83,9 @@ def place_order(request):
             messages.error(request, 'Error al colocar la orden. El carrito está vacío.')
             return redirect('carrito')
 
-        # Calcular el total de la orden
-        total = sum(item.pizza.price * item.quantity for item in user_cart_items)
-
         # Crear la orden
-        order = Order.objects.create(user=request.user, total=total)
-
-        # Agregar elementos del carrito a la orden
         for item in user_cart_items:
-            order.items.add(item)
+            OrderItem.objects.create(user=request.user, pizza=item.pizza, quantity=item.quantity, total=item.pizza.price * item.quantity)
 
         # Limpiar el carrito
         user_cart_items.delete()
@@ -105,9 +99,11 @@ def place_order(request):
     messages.error(request, 'Error al colocar la orden. Intenta nuevamente.')
     return redirect('carrito')
 
+
 def pedidos(request):
-    orders = Order.objects.all()
+    orders = OrderItem.objects.all()    
     return render(request, 'pedidos.html', {'orders': orders})
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -160,11 +156,22 @@ def index(request):
     # Recupera todas las pizzas desde la base de datos
     pizzas = Pizza.objects.all()
     
-    # Separa las pizzas por tamaño
-    pizzas_familiares = pizzas.filter(size=12)
-    pizzas_grandes = pizzas.filter(size=8)
-    pizzas_medianas = pizzas.filter(size=6)
-    pizzas_slice = pizzas.filter(size=4)
+    # Clasifica las pizzas por tamaño
+    pizzas_familiares = []
+    pizzas_grandes = []
+    pizzas_medianas = []
+    pizzas_slice = []
+
+    for pizza in pizzas:
+        # Convierte el tamaño a un entero antes de comparar
+        if int(pizza.size) >= 12:
+            pizzas_familiares.append(pizza)
+        elif int(pizza.size) >= 8:
+            pizzas_grandes.append(pizza)
+        elif int(pizza.size) >= 6:
+            pizzas_medianas.append(pizza)
+        elif int(pizza.size) >= 4:
+            pizzas_slice.append(pizza)
 
     return render(request, 'menu.html', {
         'pizzas_familiares': pizzas_familiares,

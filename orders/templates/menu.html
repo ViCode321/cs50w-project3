@@ -80,16 +80,13 @@
                         <!--Menu de Pizzas-->
                         <div class="col-md-12 d-flex align-items-center">
                             <div class="tab-content ftco-animate" id="v-pills-tabContent">
-                                
                                 <!--Pizza Familiar-->                                
-                                <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel"
-                                    aria-labelledby="v-pills-1-tab">
+                                <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-1-tab">
                                     <div class="row">
                                         {% for pizza in pizzas_familiares %}
                                         <div class="col-md-4">
                                             <div class="menu-wrap custom-product-style">
-                                                <a href="#" class="menu-img img mb-4"
-                                                    style="background-image: url({{ pizza.image_url }});"></a>
+                                                <a href="#" class="menu-img img mb-4" style="background-image: url({{ pizza.image_url }});"></a>
                                                 <div class="text">
                                                     <h3><a href="#">{{ pizza.name }}</a></h3>
                                                     <p>{{ pizza.description }}</p>
@@ -97,14 +94,12 @@
                                                     <form method="POST" action="{% url 'add_to_cart' pizza.id %}">
                                                         {% csrf_token %}
                                                         <input type="hidden" name="quantity" value="1">
-                                                        <button type="submit"
-                                                            class="btn btn-white btn-outline-white">Agregar al
-                                                            carrito</button>
+                                                        <button type="submit" class="btn btn-white btn-outline-white">Agregar al carrito</button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if pizzas_familiares.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if pizzas_familiares|length == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
                                         {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
                                         {% endfor %}
                                     </div>
@@ -131,7 +126,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if pizzas_grandes.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if pizzas_grandes|length == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
                                         {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
                                         {% endfor %}
                                     </div>
@@ -160,7 +155,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if pizzas_medianas.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if pizzas_medianas|length == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
                                         {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
                                         {% endfor %}
                                     </div>
@@ -188,7 +183,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if pizzas_slice.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if pizzas_slice|length == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
                                         {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
                                         {% endfor %}
                                     </div>                                

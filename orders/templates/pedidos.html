@@ -50,28 +50,29 @@
     <!-- END nav -->
     
     <section class="menu">
-        <div class="container mt-5">
-          <h2>Listado de Pedidos</h2>
-          {% for order in orders %}
-          <div>
-              <h2>Cliente: {{ order.user.username }}</h2>
-              <p>Fecha de Pedido: {{ order.order_date }}</p>
-              <h3>Pizzas:</h3>
-              <ul>
-                  {% for item in order.items.all %}
-                      <li>{{ item.quantity }} x {{ item.pizza.name }} - {{ item.pizza.size }}</li>
-                      <ul>
-                          <li>Toppings: {{ item.pizza.toppings.all|join:", " }}</li>
-                          <li>Ingredientes adicionales: {{ item.pizza.additional_ingredients.all|join:", " }}</li>
-                      </ul>
-                  {% endfor %}
-              </ul>
-              <p>Total: ${{ order.total }}</p>
-          </div>
-          <hr>
-          {% endfor %} 
+      <div class="container mt-5">
+        <h2>Listado de Pedidos</h2>
+        {% for order in orders %}
+        <div>
+            <h2>Cliente: {{ order.user.username }}</h2>
+            <p>Fecha de Pedido: {{ order.order_date }}</p>
+            <h3>Pizzas:</h3>
+            <ul>
+                {% for item in order.items.all %}
+                    <li>{{ item.quantity }} x {{ item.pizza.name }} - {{ item.pizza.size }}</li>
+                    <ul>
+                        <li>Toppings: {{ item.pizza.toppings.all|join:", " }}</li>
+                        <li>Ingredientes adicionales: {{ item.pizza.additional_ingredients.all|join:", " }}</li>
+                    </ul>
+                {% endfor %}
+            </ul>
+            <p>Total: ${{ order.total }}</p>
         </div>
-    </section>    
+        <hr>
+        {% endfor %} 
+      </div>
+    </section>
+  
 
     <footer class="ftco-footer ftco-section img">
         <div class="overlay"></div>
