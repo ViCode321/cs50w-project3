@@ -60,12 +60,22 @@
             <p>Fecha: {{ order.order_date }}</p>
       
             <h3>Detalle de la Orden:</h3>
-            <ul>
-              {% for item in order.items.all %}
-              <li>
-                  {{ item.quantity }} x {{ item.pizza.name }} ({{ item.pizza.size }}) - {{ item }}
-              </li>
-              {% endfor %}          
+            <ul>        
+              {% for order in orders %}
+              <h2>Orden #{{ order.id }} - {{ order.user.username }} - Total: ${{ order.total }}</h2>
+              <ul>
+                  {% for item in order.items.all %}
+                      <li>
+                          {{ item.quantity }} x {{ item.pizza.name }} ({{ item.pizza.size }})
+                          - Toppings: {{ item.pizza.toppings.all|join:", " }}
+                          - Ingredientes adicionales: {{ item.pizza.additional_ingredients.all|join:", " }}
+                          - Precio por unidad: ${{ item.pizza.price }}
+                          - Toppings: {{ item.pizza.toppings.all }}
+                          - Ingredientes adicionales: {{ item.pizza.additional_ingredients.all }}
+                      </li>
+                  {% endfor %}
+              </ul>
+              {% endfor %}                           
             </ul>  
             <p>Total: ${{ order.total }}</p>
           </div>

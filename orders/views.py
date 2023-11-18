@@ -107,8 +107,19 @@ def place_order(request):
 
 
 def pedidos(request):
-    orders = Order.objects.filter(user=request.user)
-    return render(request, 'pedidos.html', {'orders': orders})
+    user_orders = Order.objects.filter(user=request.user)
+    for order in user_orders:
+        print(f"Order #{order.id} - {order.user.username} - Total: ${order.total}")
+        print(f"Number of items: {order.items.all().count()}")
+        for item in order.items.all():
+            print(f"  - {item.quantity} x {item.pizza.name} ({item.pizza.size})")
+            print(f"    - Toppings: {', '.join(topping.name for topping in item.pizza.toppings.all())}")
+            print(f"    - Ingredientes adicionales: {', '.join(ingredient.name for ingredient in item.pizza.additional_ingredients.all())}")
+            print(f"    - Precio por unidad: ${item.pizza.price}")            
+    return render(request, 'pedidos.html', {'orders': user_orders})
+
+
+
 
 
 def login_view(request):
