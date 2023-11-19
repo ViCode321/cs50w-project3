@@ -1,5 +1,6 @@
 # Project 3
-La app cumple con los requisitos del project3, hay 2 usuariors creados es admin con contraseña admin, hay otro usuario, el cual es victor123 con contraseña 1234, implemente el envío de mensaje de confirmación al cliente, es decir cuando un cliente hace una orden de pizzas (las cuales están clasificadas por orden de tamaño) estas se agregan al carrito y el admin puede ver dichas ordenes luego este puede presionar el botón para confirmar los pedidos, y esto envía un mensaje al correo electrónico del cliente. 
+La app cumple con los requisitos del project3, hay 2 usuarios creados el admin con contraseña admin, y victor123 con contraseña 1234, implemente el envío de mensaje de confirmación al cliente, es decir cuando un cliente hace una orden de pizzas (las cuales están clasificadas por orden de tamaño) estas se agregan al carrito y el admin puede ver dichas ordenes luego este puede presionar el botón para confirmar los pedidos, y esto envía un mensaje al correo electrónico del cliente.
+El resto cumple con los requisitos del project3.
 
 # Configuración del Entorno Virtual
 
