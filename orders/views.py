@@ -1,10 +1,12 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from orders.forms import PizzaForm
-from orders.models import CartItem, Pizza
+from orders.models import CartItem, Pizza, OrderItem
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import CustomUserCreationForm
+from django.db import transaction
+from django.contrib.auth.decorators import user_passes_test
 
 def start(request):
     return render(request, 'index.html')
@@ -21,19 +23,19 @@ def carrito(request):
         if item.user == request.user:
             if action == 'remove':
                 item.delete()
-                messages.success(request, 'Producto eliminado del carrito.')
+                #messages.success(request, 'Producto eliminado del carrito.')
             elif action == 'decrease':
                 if item.quantity > 1:
                     item.quantity -= 1
                     item.save()
-                    messages.success(request, 'Cantidad reducida en 1.')
+                    #messages.success(request, 'Cantidad reducida en 1.')
                 else:
                     item.delete()
-                    messages.success(request, 'Producto eliminado del carrito.')
+                    #messages.success(request, 'Producto eliminado del carrito.')
             elif action == 'increase':
                 item.quantity += 1
                 item.save()
-                messages.success(request, 'Cantidad aumentada en 1.')
+                #messages.success(request, 'Cantidad aumentada en 1.')
         else:
             messages.error(request, 'No tienes permisos para realizar esta acción.')
 
@@ -66,11 +68,58 @@ def remove_from_cart(request, item_id):
 
     if item.user == request.user:
         item.delete()
-        messages.success(request, 'Producto eliminado del carrito.')
+        #messages.success(request, 'Producto eliminado del carrito.')
     else:
         messages.error(request, 'No tienes permisos para realizar esta acción.')
 
     return redirect('carrito')
+
+@transaction.atomic
+def place_order(request):
+    if request.method == 'POST':
+        user_cart_items = CartItem.objects.filter(user=request.user)
+
+        # Verificar si el carrito está vacío
+        if not user_cart_items.exists():
+            #messages.error(request, 'Error al colocar la orden. El carrito está vacío.')
+            return redirect('carrito')
+
+        # Crear la orden
+        for item in user_cart_items:
+            OrderItem.objects.create(user=request.user, pizza=item.pizza, quantity=item.quantity, total=item.pizza.price * item.quantity)
+
+        # Limpiar el carrito
+        user_cart_items.delete()
+
+        #messages.success(request, 'Orden colocada exitosamente. ¡Gracias por tu compra!')
+
+        # Redirigir a la página de pedidos después de realizar la orden
+        return redirect('pedidos')
+    
+    # Si no es una solicitud POST, mostrar un mensaje de error
+    messages.error(request, 'Error al colocar la orden. Intenta nuevamente.')
+    return redirect('carrito')
+
+def pedidos(request):
+    order_items = OrderItem.objects.filter(user=request.user)
+    orders = []
+    for order_item in order_items:
+        order_details = {
+            'order_id': order_item.id,
+            'user': order_item.user.username,
+            'order_date': order_item.order_date,
+            'items': [
+                {
+                    'pizza_name': order_item.pizza.name,
+                    'quantity': order_item.quantity,
+                    'size': order_item.pizza.size,
+                    'price': order_item.total,
+                }
+            ]
+        }
+        orders.append(order_details)
+    total_general = sum(order_item.total for order_item in order_items)
+    return render(request, 'pedidos.html', {'orders': orders, 'total_general': total_general})
 
 def login_view(request):
     if request.method == 'POST':
@@ -106,10 +155,73 @@ def register_view(request):
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
+def is_admin(user):
+    return user.is_superuser
 
-# Create your views here.
-def home(request):
-    return HttpResponse("Bienvenido a Pinocchio's Pizza & Subs")
+def view_orders(request):
+    order_items = OrderItem.objects.all()
+    orders = []
+    total_general = 0
+
+    for order_item in order_items:
+        order_details = {
+            'order_id': order_item.id,
+            'user': order_item.user.username,
+            'order_date': order_item.order_date,
+            'items': [
+                {
+                    'pizza_name': order_item.pizza.name,
+                    'quantity': order_item.quantity,
+                    'size': order_item.pizza.size,
+                    'price': order_item.total,
+                }
+            ]
+        }
+        orders.append(order_details)
+        total_general += order_item.total
+
+    return render(request, 'view_orders.html', {'orders': orders, 'total_general': total_general})
+"""
+@transaction.atomic
+def place_order(request):
+    if request.method == 'POST':
+        user_cart_items = CartItem.objects.filter(user=request.user)
+
+        # Verificar si el carrito está vacío
+        if not user_cart_items.exists():
+            messages.error(request, 'Error al colocar la orden. El carrito está vacío.')
+            return redirect('carrito')
+
+        # Crear la orden
+        order_items = []
+        for item in user_cart_items:
+            order_item = OrderItem.objects.create(user=request.user, pizza=item.pizza, quantity=item.quantity, total=item.pizza.price * item.quantity)
+            order_items.append(order_item)
+
+        # Limpiar el carrito
+        user_cart_items.delete()
+
+        # Enviar correo electrónico de confirmación
+        send_order_confirmation_email(request.user, order_items)
+
+        messages.success(request, 'Orden colocada exitosamente. ¡Gracias por tu compra!')
+
+        # Redirigir a la página de pedidos después de realizar la orden
+        return redirect('pedidos')
+    
+    # Si no es una solicitud POST, mostrar un mensaje de error
+    messages.error(request, 'Error al colocar la orden. Intenta nuevamente.')
+    return redirect('carrito')
+
+
+def send_order_confirmation_email(user, order_items):
+    subject = 'Confirmación de Orden'
+    message = render_to_string('order_confirmation_email.html', {'user': user, 'order_items': order_items})
+    from_email = config('EMAIL_HOST_USER')
+    recipient_list = [user.email]
+
+    send_mail(subject, message, from_email, recipient_list)        
+    """
 
 def index(request):
     if request.method == 'POST':
@@ -123,11 +235,22 @@ def index(request):
     # Recupera todas las pizzas desde la base de datos
     pizzas = Pizza.objects.all()
     
-    # Separa las pizzas por tamaño
-    pizzas_familiares = pizzas.filter(size=12)
-    pizzas_grandes = pizzas.filter(size=8)
-    pizzas_medianas = pizzas.filter(size=6)
-    pizzas_slice = pizzas.filter(size=4)
+    # Clasifica las pizzas por tamaño
+    pizzas_familiares = []
+    pizzas_grandes = []
+    pizzas_medianas = []
+    pizzas_slice = []
+
+    for pizza in pizzas:
+        # Convierte el tamaño a un entero antes de comparar
+        if int(pizza.size) >= 12:
+            pizzas_familiares.append(pizza)
+        elif int(pizza.size) >= 8:
+            pizzas_grandes.append(pizza)
+        elif int(pizza.size) >= 6:
+            pizzas_medianas.append(pizza)
+        elif int(pizza.size) >= 4:
+            pizzas_slice.append(pizza)
 
     return render(request, 'menu.html', {
         'pizzas_familiares': pizzas_familiares,
@@ -137,48 +260,6 @@ def index(request):
         'form': form,
     })
 
-def cart_view(request):
-    user_cart_items = CartItem.objects.filter(user=request.user)
-
-    if request.method == 'POST' and request.is_ajax():
-        item_id = request.POST.get('item_id')
-        action = request.POST.get('action')
-
-        item = get_object_or_404(CartItem, id=item_id)
-
-        if item.user == request.user:
-            if action == 'remove':
-                item.delete()
-                messages.success(request, 'Producto eliminado del carrito.')
-            elif action == 'decrease':
-                if item.quantity > 1:
-                    item.quantity -= 1
-                    item.save()
-                    messages.success(request, 'Cantidad reducida en 1.')
-                else:
-                    item.delete()
-                    messages.success(request, 'Producto eliminado del carrito.')
-            elif action == 'increase':
-                item.quantity += 1
-                item.save()
-                messages.success(request, 'Cantidad aumentada en 1.')
-
-            # Devuelve la información actualizada del carrito en formato JSON
-            cart_items = [{'id': item.id, 'name': item.pizza.name, 'size': item.pizza.size, 'price': item.pizza.price, 'quantity': item.quantity, 'image_url': item.pizza.image_url} for item in user_cart_items]
-            total = sum(item.pizza.price * item.quantity for item in user_cart_items)
-            
-            response_data = {
-                'message': 'Operación exitosa',
-                'cart_items': cart_items,
-                'total': total,
-            }
-
-            return JsonResponse(response_data)
-        else:
-            messages.error(request, 'No tienes permisos para realizar esta acción.')
-
-    context = {
-        'cart_items': user_cart_items,
-    }
-
-    return render(request, 'carrito.html', context)
+# Create your views here.
+def home(request):
+    return HttpResponse("Bienvenido a Pinocchio's Pizza & Subs")

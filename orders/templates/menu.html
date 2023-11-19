@@ -28,29 +28,32 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'start' %}"><span
-                    class="flaticon-pizza-1 mr-1"></span>Pizza<br><small>Delicous</small></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
-                aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="oi oi-menu"></span> Menu
-            </button>
-            <div class="collapse navbar-collapse" id="ftco-nav">
+	    <div class="container">
+            <a class="navbar-brand" href="{% url 'start' %}"><span class="flaticon-pizza-1 mr-1"></span>Pinocchio's<br><small>Pizza & Subs</small></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+		        <span class="oi oi-menu"></span> Menu
+		      </button>
+              <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active"><a href="{% url 'start' %}" class="nav-link">Inicio</a></li>
+                    <li class="nav-item"><a href="{% url 'start' %}" class="nav-link">Inicio</a></li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item"><a href="{% url 'menu' %}" class="nav-link">Menu</a></li>
-                    <li class="nav-item"><a href="{% url 'carrito' %}" class="nav-link">Mi Carrito</a></li>
-                    <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Cerrar Sesión</a></li>
-                    <li class="nav-item"><a class="nav-link">!Hola, {{ user.username }}!</a></li>
+                        <li class="nav-item active"><a href="{% url 'menu' %}" class="nav-link">Menu</a></li>
+                        <li class="nav-item"><a href="{% url 'carrito' %}" class="nav-link">Mi Carrito</a></li>
+                        <li class="nav-item"><a href="{% url 'pedidos' %}" class="nav-link">Pedidos</a></li>
+                        {% if user.is_superuser %}
+                            <li class="nav-item"><a href="{% url 'view_orders' %}" class="nav-link">Ver Órdenes</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Cerrar Sesión</a></li>
+                        <li class="nav-item"><a class="nav-link">¡Hola, {{ user.username }}!</a></li>
                     {% else %}
-                    <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Acceder</a></li>
-                    <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Registrarse</a></li>
+                        <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Acceder</a></li>
+                        <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Registrarse</a></li>
                     {% endif %}
                 </ul>
             </div>
-        </div>
-    </nav>
+            
+		  </div>
+	  </nav>
     <!-- END nav -->
     <section class="ftco-menu">
         <div class="container-fluid">
@@ -79,16 +82,13 @@
                         <!--Menu de Pizzas-->
                         <div class="col-md-12 d-flex align-items-center">
                             <div class="tab-content ftco-animate" id="v-pills-tabContent">
-                                
                                 <!--Pizza Familiar-->                                
-                                <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel"
-                                    aria-labelledby="v-pills-1-tab">
+                                <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-1-tab">
                                     <div class="row">
                                         {% for pizza in pizzas_familiares %}
                                         <div class="col-md-4">
                                             <div class="menu-wrap custom-product-style">
-                                                <a href="#" class="menu-img img mb-4"
-                                                    style="background-image: url({{ pizza.image_url }});"></a>
+                                                <a href="#" class="menu-img img mb-4" style="background-image: url({{ pizza.image_url }});"></a>
                                                 <div class="text">
                                                     <h3><a href="#">{{ pizza.name }}</a></h3>
                                                     <p>{{ pizza.description }}</p>
@@ -96,14 +96,12 @@
                                                     <form method="POST" action="{% url 'add_to_cart' pizza.id %}">
                                                         {% csrf_token %}
                                                         <input type="hidden" name="quantity" value="1">
-                                                        <button type="submit"
-                                                            class="btn btn-white btn-outline-white">Agregar al
-                                                            carrito</button>
+                                                        <button type="submit" class="btn btn-white btn-outline-white">Agregar al carrito</button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if pizzas_grandes.count == 2 and forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if pizzas_familiares|length == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
                                         {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
                                         {% endfor %}
                                     </div>
@@ -130,7 +128,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if pizzas_grandes.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if pizzas_grandes|length == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
                                         {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
                                         {% endfor %}
                                     </div>
@@ -159,7 +157,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if pizzas_medianas.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if pizzas_medianas|length == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
                                         {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
                                         {% endfor %}
                                     </div>
@@ -187,7 +185,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% if pizzas_slice.count == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
+                                        {% if pizzas_slice|length == 2 and not forloop.last %}<div class="col-md-4 w-100"></div>{% endif %}
                                         {% if forloop.counter|divisibleby:3 and not forloop.last %}<div class="w-100"></div>{% endif %}
                                         {% endfor %}
                                     </div>                                

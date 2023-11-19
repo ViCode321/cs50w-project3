@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Mi carrito</title>
+    <title>Ordenes</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
@@ -24,96 +24,68 @@
     <link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-    <div class="container">
-      <a class="navbar-brand" href="{% url 'start' %}"><span class="flaticon-pizza-1 mr-1"></span>Pinocchio's<br><small>Pizza & Subs</small></a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="oi oi-menu"></span> Menu
-        </button>
-            <div class="collapse navbar-collapse" id="ftco-nav">
-              <ul class="navbar-nav ml-auto">
-                  <li class="nav-item"><a href="{% url 'start' %}" class="nav-link">Inicio</a></li>
-                  {% if user.is_authenticated %}
-                      <li class="nav-item"><a href="{% url 'menu' %}" class="nav-link">Menu</a></li>
-                      <li class="nav-item active"><a href="{% url 'carrito' %}" class="nav-link">Mi Carrito</a></li>
-                      <li class="nav-item"><a href="{% url 'pedidos' %}" class="nav-link">Pedidos</a></li>
-                      {% if user.is_superuser %}
-                          <li class="nav-item"><a href="{% url 'view_orders' %}" class="nav-link">Ver Órdenes</a></li>
-                      {% endif %}
-                      <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Cerrar Sesión</a></li>
-                      <li class="nav-item"><a class="nav-link">¡Hola, {{ user.username }}!</a></li>
-                  {% else %}
-                      <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Acceder</a></li>
-                      <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Registrarse</a></li>
-                  {% endif %}
-              </ul>
-          </div>
-          
-    </div>
-  </nav>
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	    <div class="container">
+            <a class="navbar-brand" href="{% url 'start' %}"><span class="flaticon-pizza-1 mr-1"></span>Pinocchio's<br><small>Pizza & Subs</small></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+		        <span class="oi oi-menu"></span> Menu
+		      </button>
+              <div class="collapse navbar-collapse" id="ftco-nav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a href="{% url 'start' %}" class="nav-link">Inicio</a></li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a href="{% url 'menu' %}" class="nav-link">Menu</a></li>
+                        <li class="nav-item"><a href="{% url 'carrito' %}" class="nav-link">Mi Carrito</a></li>
+                        <li class="nav-item"><a href="{% url 'pedidos' %}" class="nav-link">Pedidos</a></li>
+                        {% if user.is_superuser %}
+                            <li class="nav-item active"><a href="{% url 'view_orders' %}" class="nav-link">Ver Órdenes</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Cerrar Sesión</a></li>
+                        <li class="nav-item"><a class="nav-link">¡Hola, {{ user.username }}!</a></li>
+                    {% else %}
+                        <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Acceder</a></li>
+                        <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Registrarse</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+		  </div>
+	</nav>
     <!-- END nav -->
-    
-    <section class="menu">
+    <section class="orders">
         <div class="container mt-5">
-            <h2>Mi Carrito</h2>
-            {% if order_confirmation_message %}
-            <p class="text-success">{{ order_confirmation_message }}</p>
-            {% endif %}
-            {% if cart_items %}
-                <table class="table mt-3">
-                    <thead>
-                        <tr>
-                            <th>Imagen</th>
-                            <th>Nombre</th>
-                            <th>Tamaño</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if messages %}
-                        <div class="error-messages">
-                          {% for message in messages %}
-                            <div class="message">{{ message }}</div>
-                          {% endfor %}              
-                        </div>            
-                        {% endif %}                                          
-                        {% for item in cart_items %}
-                            <tr>
-                                <td><img src="{{ item.pizza.image_url }}" alt="{{ item.pizza.name }}" style="max-width: 100px;"></td>
-                                <td>{{ item.pizza.name }}</td>
-                                <td>{{ item.pizza.size }}</td>
-                                <td>${{ item.pizza.price }}</td>
-                                <td>
-                                    <form method="POST" action="{% url 'carrito' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="item_id" value="{{ item.id }}">
-                                        <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary btn-sm">-</button>
-                                        {{ item.quantity }}
-                                        <button type="submit" name="action" value="increase" class="btn btn-outline-secondary btn-sm">+</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <form method="POST" action="{% url 'remove_from_cart' item.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <form method="POST" action="{% url 'place_order' %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-primary">Colocar Orden</button>
-                </form>
+            <h2>Listado de Órdenes</h2>
+            {% if orders %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fecha de Pedido</th>
+                        <th>Usuario</th>
+                        <th>Detalles de las Pizzas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order_data in orders %}
+                    <tr>
+                        <td>{{ order_data.order_date }}</td>
+                        <td>{{ order_data.user }}</td>
+                        <td>
+                            <ul>
+                                {% for item in order_data.items %}
+                                    <li>{{ item.quantity }} x {{ item.pizza_name }} - Tamaño: {{ item.size }} - Precio: ${{ item.price }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Total General: ${{ total_general }}</h3>            
             {% else %}
-                <p>No tienes elementos en tu carrito.</p>
+                <p>No hay órdenes disponibles.</p>
             {% endif %}
         </div>
-    </section>
-    
+    </section>            
 
     <footer class="ftco-footer ftco-section img">
         <div class="overlay"></div>

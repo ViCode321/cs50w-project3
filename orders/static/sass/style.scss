@@ -1,3 +1,4 @@
+//menu-wrap
 @import 'bootstrap/bootstrap';
 @import 'bootstrap/variables';
 
@@ -880,30 +881,40 @@ h1, h2, h3, h4, h5,
 		}
 	}
 }
-.menu-wrap{
-	.menu-img{
-		display: block;
-		width: 200px;
-		height: 200px;
-		margin: 0 auto;
-		@include border-radius(50%);
+.menu-wrap {
+	display: flex;
+	flex-direction: column; /* Alinea elementos verticalmente */
+	align-items: center; /* Centra horizontalmente */
+	text-align: center; /* Alinea el texto horizontalmente */
+	margin-bottom: 20px; /* Agrega espacio inferior entre productos */
+  
+	.menu-img {
+	  display: block;
+	  width: 200px;
+	  height: 200px;
+	  margin: 0 auto;
+	  border-radius: 50%;
 	}
-	.text{
-		h3{
-			font-size: 22px;
-			a{
-				color: $white;
-			}
+  
+	.text {
+	  h3 {
+		font-size: 22px;
+  
+		a {
+		  color: $white;
 		}
-		.price{
-			font-size: 16px;
-			font-weight: 400;
-			span{
-				color: $primary;
-			}
+	  }
+  
+	  .price {
+		font-size: 16px;
+		font-weight: 400;
+		span {
+		  color: $primary;
 		}
+	  }
 	}
-}
+  }
+  
 
 //APPOINTMENT
 .ftco-appointment{
