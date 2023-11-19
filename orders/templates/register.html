@@ -15,29 +15,53 @@
             {% csrf_token %}
             <p class="title">Registrarse</p>
             <input type="text" name="first_name" placeholder="Primer Nombre" autofocus/>
-            <i class="fa fa-user-circle"></i>
-            <input type="text" name="last_name" placeholder="Primer Apellido" autofocus/>
-            <i class="fa fa-users"></i>                      
-            <input type="text" name="username" placeholder="Usuario"/>
-            <i class="fa fa-user"></i>            
-            <input type="email" name="email" placeholder="Correo electrónico"/>
-            <i class="fa fa-envelope"></i>                                              
-            <input type="password" name="password1" placeholder="Contraseña"/>
-            <i class="fa fa-key"></i>
-            <input type="password" name="password2" placeholder="Confirmar contraseña"/>
-            <i class="fa fa-lock"></i>            
-            {% if messages %}
-            <div class="error-messages">
-                {% for message in messages %}
-                <div class="message">{{ message }}</div>
+            <i class="fa fa-user-circle"></i>             
+            {% if form.first_name.errors %}
+                {% for error in form.first_name.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
                 {% endfor %}
-            </div>
+            {% endif %}
+            <input type="text" name="last_name" placeholder="Primer Apellido" autofocus/>
+            <i class="fa fa-users"></i>                                  
+            {% if form.last_name.errors %}
+                {% for error in form.last_name.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+            <input type="text" name="username" placeholder="Usuario"/>
+            <i class="fa fa-user"></i>                        
+            {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+            <input type="email" name="email" placeholder="Correo electrónico"/>
+            <i class="fa fa-envelope"></i>                                                          
+            {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+            <input type="password" name="password1" placeholder="Contraseña"/>
+            <i class="fa fa-key"></i>            
+            {% if form.password1.errors %}
+                {% for error in form.password1.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+            <input type="password" name="password2" placeholder="Confirmar contraseña"/>
+            <i class="fa fa-lock"></i>                        
+            {% if form.password2.errors %}
+                {% for error in form.password2.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
             {% endif %}
             <button type="submit">
                 <i class="spinner"></i>
                 <span class="state">Listo</span>
             </button>
-        </form>    
+        </form>
+        
         <footer><a href="{% url 'login' %}">Regresar</a></footer>
     </div>
     <script src="{% static 'js/login.js' %}"></script>

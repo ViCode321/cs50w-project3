@@ -1,12 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from orders.forms import PizzaForm
+from orders.forms import PizzaForm, CustomUserCreationForm
 from orders.models import CartItem, Pizza, OrderItem
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import CustomUserCreationForm
+#from .forms import CustomUserCreationForm
 from django.db import transaction
-from django.contrib.auth.decorators import user_passes_test
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
 
 def start(request):
     return render(request, 'index.html')
@@ -139,21 +141,23 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-
 def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+        print('Form is valid: ', form.is_valid())  # Imprime si el formulario es válido
+        print('Form errors: ', form.errors)  # Imprime los errores del formulario
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Iniciar sesión automáticamente después del registro
+            login(request, user)
             return redirect('start')
         else:
-            messages.error(request, 'Hubo un error en el registro. Por favor, corrige los errores a continuación.')
-            # Devuelve la plantilla 'register.html' junto con el formulario y los mensajes de error
-            return render(request, 'register.html', {'form': form})        
+            messages.error(request, 'Hubo un error en el registro. Corrige los errores a continuación.')
+            return render(request, 'register.html', {'form': form})
     else:
         form = CustomUserCreationForm()
+
     return render(request, 'register.html', {'form': form})
+
 
 def is_admin(user):
     return user.is_superuser
@@ -181,47 +185,6 @@ def view_orders(request):
         total_general += order_item.total
 
     return render(request, 'view_orders.html', {'orders': orders, 'total_general': total_general})
-"""
-@transaction.atomic
-def place_order(request):
-    if request.method == 'POST':
-        user_cart_items = CartItem.objects.filter(user=request.user)
-
-        # Verificar si el carrito está vacío
-        if not user_cart_items.exists():
-            messages.error(request, 'Error al colocar la orden. El carrito está vacío.')
-            return redirect('carrito')
-
-        # Crear la orden
-        order_items = []
-        for item in user_cart_items:
-            order_item = OrderItem.objects.create(user=request.user, pizza=item.pizza, quantity=item.quantity, total=item.pizza.price * item.quantity)
-            order_items.append(order_item)
-
-        # Limpiar el carrito
-        user_cart_items.delete()
-
-        # Enviar correo electrónico de confirmación
-        send_order_confirmation_email(request.user, order_items)
-
-        messages.success(request, 'Orden colocada exitosamente. ¡Gracias por tu compra!')
-
-        # Redirigir a la página de pedidos después de realizar la orden
-        return redirect('pedidos')
-    
-    # Si no es una solicitud POST, mostrar un mensaje de error
-    messages.error(request, 'Error al colocar la orden. Intenta nuevamente.')
-    return redirect('carrito')
-
-
-def send_order_confirmation_email(user, order_items):
-    subject = 'Confirmación de Orden'
-    message = render_to_string('order_confirmation_email.html', {'user': user, 'order_items': order_items})
-    from_email = config('EMAIL_HOST_USER')
-    recipient_list = [user.email]
-
-    send_mail(subject, message, from_email, recipient_list)        
-    """
 
 def index(request):
     if request.method == 'POST':
@@ -259,6 +222,45 @@ def index(request):
         'pizzas_slice': pizzas_slice,
         'form': form,
     })
+
+@transaction.atomic
+def confirm_order(request):
+    if request.method == 'POST':
+        user_cart_items = CartItem.objects.filter(user=request.user)
+
+        # Verificar si el carrito está vacío
+        if not user_cart_items.exists():
+            return redirect('carrito')
+
+        # Crear la orden
+        order_items = []
+        for item in user_cart_items:
+            order_item = OrderItem.objects.create(user=request.user, pizza=item.pizza, quantity=item.quantity, total=item.pizza.price * item.quantity)
+            order_items.append(order_item)
+
+        # Limpiar el carrito
+        user_cart_items.delete()
+
+        # Calcular el total general
+        total_general = sum(order_item.total for order_item in order_items)
+
+        # Enviar correo electrónico de confirmación
+        send_order_confirmation_email(request.user, order_items, total_general)
+
+        return redirect('pedidos')
+
+    messages.error(request, 'Error al confirmar la orden. Intenta nuevamente.')
+    return redirect('carrito')
+
+
+def send_order_confirmation_email(user, order_items, total_general):
+    subject = 'Confirmación de Orden'
+    message = render_to_string('order_confirmation_email.html', {'user': user, 'order_items': order_items, 'total_general': total_general})
+    from_email = settings.EMAIL_HOST_USER
+    recipient_list = [user.email]
+
+    send_mail(subject, message, from_email, recipient_list)
+
 
 # Create your views here.
 def home(request):

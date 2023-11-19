@@ -53,39 +53,47 @@
 	</nav>
     <!-- END nav -->
     <section class="orders">
-        <div class="container mt-5">
-            <h2>Listado de Órdenes</h2>
-            {% if orders %}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Fecha de Pedido</th>
-                        <th>Usuario</th>
-                        <th>Detalles de las Pizzas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order_data in orders %}
-                    <tr>
-                        <td>{{ order_data.order_date }}</td>
-                        <td>{{ order_data.user }}</td>
-                        <td>
-                            <ul>
-                                {% for item in order_data.items %}
-                                    <li>{{ item.quantity }} x {{ item.pizza_name }} - Tamaño: {{ item.size }} - Precio: ${{ item.price }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <h3>Total General: ${{ total_general }}</h3>            
-            {% else %}
-                <p>No hay órdenes disponibles.</p>
-            {% endif %}
-        </div>
-    </section>            
+      <div class="container mt-5">
+          <h2>Listado de Órdenes</h2>
+          {% if orders %}
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>Fecha de Pedido</th>
+                      <th>Usuario</th>
+                      <th>Detalles de las Pizzas</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for order_data in orders %}
+                  <tr>
+                      <td>{{ order_data.order_date }}</td>
+                      <td>{{ order_data.user }}</td>
+                      <td>
+                          <ul>
+                              {% for item in order_data.items %}
+                                  <li>{{ item.quantity }} x {{ item.pizza_name }} - Tamaño: {{ item.size }} - Precio: ${{ item.price }}</li>
+                              {% endfor %}
+                          </ul>
+                      </td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+          <h3>Total General: ${{ total_general }}</h3>
+
+          <!-- Botón para confirmar pedido -->
+          <form method="post" action="{% url 'confirm_order' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary">Confirmar Pedido</button>
+          </form>          
+  
+          {% else %}
+              <p>No hay órdenes disponibles.</p>
+          {% endif %}
+      </div>
+    </section>
+       
 
     <footer class="ftco-footer ftco-section img">
         <div class="overlay"></div>
