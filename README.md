@@ -16,7 +16,7 @@ cd ruta/a/tu/proyecto
 ```
 3. Crea el entorno virtual en Windows
 ```bash
-python -m venv venv
+python -m venv myenv
 ```
 
 4. Activa el entorno virtual en powershell
@@ -28,11 +28,11 @@ python -m venv venv
 
 1. Crea el entorno virtual en macOS y Linux
 ```bash
-python3 -m venv venv
+python3 -m venv myenv
 ```
 2. Activa el entorno virtual en macOS y Linux
 ```bash
-source venv/bin/activate
+source myenv/bin/activate
 ```
 
 ## Instalar los paquetes del proyecto
