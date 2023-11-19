@@ -14,6 +14,5 @@ urlpatterns = [
     path('place_order/', place_order, name='place_order'),
     path('pedidos/', pedidos, name='pedidos'),    
     path('view_orders', view_orders, name='view_orders'),
-    path('confirmar_pedido/', views.confirm_order, name='confirm_order'),    
     # Otras URLS
 ]
