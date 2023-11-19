@@ -21,7 +21,7 @@ python -m venv myenv
 
 4. Activa el entorno virtual en powershell
 ```bash
-.\venv\Scripts\Activate.ps1
+.\myenv\Scripts\Activate.ps1
 ```
 
 ## macOS y Linux
