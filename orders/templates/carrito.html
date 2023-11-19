@@ -65,6 +65,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% if messages %}
+                        <div class="error-messages">
+                          {% for message in messages %}
+                            <div class="message">{{ message }}</div>
+                          {% endfor %}              
+                        </div>            
+                        {% endif %}                                          
                         {% for item in cart_items %}
                             <tr>
                                 <td><img src="{{ item.pizza.image_url }}" alt="{{ item.pizza.name }}" style="max-width: 100px;"></td>

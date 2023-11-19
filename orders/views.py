@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from orders.forms import PizzaForm
 from orders.models import CartItem, Pizza
@@ -136,3 +136,49 @@ def index(request):
         'pizzas_slice': pizzas_slice,
         'form': form,
     })
+
+def cart_view(request):
+    user_cart_items = CartItem.objects.filter(user=request.user)
+
+    if request.method == 'POST' and request.is_ajax():
+        item_id = request.POST.get('item_id')
+        action = request.POST.get('action')
+
+        item = get_object_or_404(CartItem, id=item_id)
+
+        if item.user == request.user:
+            if action == 'remove':
+                item.delete()
+                messages.success(request, 'Producto eliminado del carrito.')
+            elif action == 'decrease':
+                if item.quantity > 1:
+                    item.quantity -= 1
+                    item.save()
+                    messages.success(request, 'Cantidad reducida en 1.')
+                else:
+                    item.delete()
+                    messages.success(request, 'Producto eliminado del carrito.')
+            elif action == 'increase':
+                item.quantity += 1
+                item.save()
+                messages.success(request, 'Cantidad aumentada en 1.')
+
+            # Devuelve la información actualizada del carrito en formato JSON
+            cart_items = [{'id': item.id, 'name': item.pizza.name, 'size': item.pizza.size, 'price': item.pizza.price, 'quantity': item.quantity, 'image_url': item.pizza.image_url} for item in user_cart_items]
+            total = sum(item.pizza.price * item.quantity for item in user_cart_items)
+            
+            response_data = {
+                'message': 'Operación exitosa',
+                'cart_items': cart_items,
+                'total': total,
+            }
+
+            return JsonResponse(response_data)
+        else:
+            messages.error(request, 'No tienes permisos para realizar esta acción.')
+
+    context = {
+        'cart_items': user_cart_items,
+    }
+
+    return render(request, 'carrito.html', context)
